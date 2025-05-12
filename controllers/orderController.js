@@ -1,14 +1,31 @@
 import Order from '../models/Order.js';
+import Customer from '../models/Customer.js';
 
 export const addOrder = async (req, res) => {
   try {
     const order = new Order(req.body);
-    const savedOrder = await order.save(); // Saves to MongoDB
+    const savedOrder = await order.save(); // Save order to MongoDB
 
-    // Save to Redis (optional step)
-    const redisKey = `order:${savedOrder._id}`;
+    // Optional: Save order to Redis
+    const redisOrderKey = `order:${savedOrder._id}`;
     if (req.redis) {
-      await req.redis.set(redisKey, JSON.stringify(savedOrder), { EX: 3600 }); // 1 hour
+      await req.redis.set(redisOrderKey, JSON.stringify(savedOrder), { EX: 3600 }); // 1 hour
+    }
+
+    // 👉 Update the customer's total spend
+    const customer = await Customer.findById(savedOrder.customerId);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Assuming the order has an 'amount' field
+    customer.totalSpend = (customer.totalSpend || 0) + savedOrder.amount;
+    const updatedCustomer = await customer.save();
+
+    // Optional: Update customer in Redis
+    const redisCustomerKey = `customer:${customer._id}`;
+    if (req.redis) {
+      await req.redis.set(redisCustomerKey, JSON.stringify(updatedCustomer), { EX: 3600 });
     }
 
     res.status(201).json(savedOrder);
