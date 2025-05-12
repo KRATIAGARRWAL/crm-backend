@@ -10,7 +10,7 @@ export const simulateDelivery = async (req, res) => {
     const status = Math.random() < 0.9 ? 'SENT' : 'FAILED';
 
     // Call internal delivery receipt API
-    await fetch('http://localhost:5000/api/vendor/receipt', {
+    await fetch('https://crm-backend-d0ny.onrender.com/api/vendor/receipt', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

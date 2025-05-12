@@ -105,7 +105,7 @@ export const createSegment = async (req, res) => {
     console.log("customers"+customers);
 
     // === Simulate delivery ===
-    await fetch('http://localhost:5000/api/vendor/send', {
+    await fetch('https://crm-backend-d0ny.onrender.com/api/vendor/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
