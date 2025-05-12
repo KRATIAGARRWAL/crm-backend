@@ -73,7 +73,11 @@ export const previewAudience = async (req, res) => {
 
 export const createSegment = async (req, res) => {
   try {
-    const { name, rules, logic } = req.body;
+    // const { name, rules, logic } = req.body;
+    const { name, rules, logic,message } = req.body;
+
+    // console.log(message+" fghf");
+
     const segment = new Segment({ name, rules, logic });
     await segment.save();
 
@@ -98,6 +102,7 @@ export const createSegment = async (req, res) => {
 
     const mongoQuery = logic === 'AND' ? { $and: query } : { $or: query };
     const customers = await Customer.find(mongoQuery);
+    console.log("customers"+customers);
 
     // === Simulate delivery ===
     await fetch('http://localhost:5000/api/vendor/send', {
@@ -106,9 +111,10 @@ export const createSegment = async (req, res) => {
       body: JSON.stringify({
         segmentId: segment._id,
         customers,
-        message: "here’s 10% off on your next order!"
+        message: message||"here’s 10% off on your next order!"
       }),
     });
+    console.log("after fetch");
 
     res.status(201).json(segment);
   } catch (error) {

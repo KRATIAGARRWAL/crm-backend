@@ -13,7 +13,8 @@ export const receiveReceipt = async (req, res) => {
 
     await log.save();
     res.status(201).json(log);
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Receipt Error:', error.message);
     res.status(400).json({ message: error.message });
   }

@@ -2,6 +2,8 @@ import fetch from 'node-fetch';
 
 export const simulateDelivery = async (req, res) => {
   const { segmentId, customers, message } = req.body;
+  console.log("in simulate delivery")
+  console.log(customers.length);
 
   // Send to each customer
   const logs = await Promise.all(customers.map(async (cust) => {
